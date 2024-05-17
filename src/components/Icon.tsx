@@ -1,8 +1,8 @@
+import useColors from '@app/theme/useColors';
+import {moderateHScale} from '@app/utils/helper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import React, {memo} from 'react';
-import {Ionicons} from '@expo/vector-icons';
 import {TextProps} from 'react-native';
-import {moderateHScale} from '@utils/helper';
-import useColors from '@theme/useColors';
 
 const IconName: {[key: string]: React.ComponentType<any>} = {
   Ionicons,
@@ -21,7 +21,7 @@ interface IconProps extends TextProps {
   color?: string;
 }
 
-export function IconCompo({
+function IconCompo({
   name = DEFAULT_NAME,
   type = DEFAULT_TYPE,
   size = DEFAULT_SIZE,
