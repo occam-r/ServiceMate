@@ -77,3 +77,17 @@ To learn more about React Native, take a look at the following resources:
 - [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
 - [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
 - [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+
+
+Login
+1. email password 
+2. phone otp
+
+Admin
+1. add user & logout => CTA all users list with number of task assigned
+2. while adding user, add it to voice call provider and firebase auth
+3. unassigned task, assigned task tab (contains all open task)
+4. unassigned to assign and assigned to re-assign
+5. add user with number and name, show and hide contact number of customer 
+6. task list with location, chat, call, comments, with show and hide number
+7. filter user by assigned name

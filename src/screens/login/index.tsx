@@ -1,22 +1,8 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 import {TColors} from '@app/theme/Colors';
 import useStyles from '@app/theme/useStyles';
 import {moderateHScale} from '@app/utils/helper';
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
 import {SwitchTab} from '@app/components';
 import Phone from './Phone';
 import Email from './Email';
@@ -30,12 +16,12 @@ function Home(): React.JSX.Element {
         barStyle={colors.statusBar}
         backgroundColor={styles.container.backgroundColor}
       />
-      <View style={{flexGrow: 1}}>
+      <View style={styles.tabCont}>
         <Text style={styles.welcomeText}>Welcome!</Text>
       </View>
       <SwitchTab
         items={['PHONE', 'EMAIL']}
-        component={[<Phone title="" />, <Email title="" />]}
+        component={[<Phone />, <Email />]}
       />
       <Text style={styles.termText}>
         By continuing, you agree to our{' '}
@@ -51,6 +37,9 @@ const createStyles = (colors: TColors) =>
     container: {
       flexGrow: 1,
       backgroundColor: colors.background,
+    },
+    tabCont: {
+      flexGrow: 1,
     },
     welcomeText: {
       padding: '5%',

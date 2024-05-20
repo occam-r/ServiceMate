@@ -1,139 +1,92 @@
-import images from '@app/assets/images';
-import {Icon} from '@app/components';
+import React, {memo, useState, useCallback} from 'react';
+import {Alert, Button, StyleSheet, View} from 'react-native';
+import {InputField} from '@app/components';
 import {TColors} from '@app/theme/Colors';
 import useStyles from '@app/theme/useStyles';
-import {SCREEN_WIDTH, moderateHScale, moderateVScale} from '@app/utils/helper';
-import React, {memo, useRef, useState} from 'react';
-import {Button, Image, StyleSheet, Text, TextInput, View} from 'react-native';
+import {SCREEN_WIDTH} from '@app/utils/helper';
+import authService from '@app/services/login';
 
-type EmailProps = {
-  title: string;
-};
-
-function Email({title}: EmailProps): React.JSX.Element {
+function Email(): React.JSX.Element {
   const {colors, styles} = useStyles(createStyles);
-  const inputRef = useRef<TextInput>(null);
-  const [phoneNumber, setPhoneNumber] = useState<string>('');
-  const [phoneNumberError, setPhoneNumberError] = useState<string>('');
+  const [secure, setSecure] = useState(true);
+  const [emailAddress, setEmailAddress] = useState('kashif.dev01@yopmail.com');
+  const [emailAddressError, setEmailAddressError] = useState('');
+  const [password, setPassword] = useState('P@ssw0rd@123');
+  const [passwordError, setPasswordError] = useState('');
+
+  const onLoginPressed = useCallback(() => {
+    if (!emailAddress || !password) {
+      setEmailAddressError(
+        emailAddress ? '' : 'Please enter your email address',
+      );
+      setPasswordError(password ? '' : 'Please enter your password');
+      return;
+    }
+
+    authService
+      .signInWithEmailAndPassword(emailAddress, password)
+      .then(() => {
+        console.log('User account created & signed in!');
+      })
+      .catch(error => {
+        if (error.code === 'auth/invalid-credential') {
+          Alert.alert(
+            'Invalid Credential',
+            'The supplied auth credential is incorrect',
+          );
+        }
+        console.error(error);
+      });
+  }, [emailAddress, password]);
+
+  const handleEmailChange = useCallback((text: string) => {
+    setEmailAddress(text);
+    setEmailAddressError('');
+  }, []);
+
+  const handlePasswordChange = useCallback((text: string) => {
+    setPassword(text);
+    setPasswordError('');
+  }, []);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Phone Number</Text>
-      <View style={styles.inputContainer}>
-        <Image
-          source={images.indian_flag}
-          resizeMode="contain"
-          style={styles.flag}
-        />
-        <Text style={styles.countryCode}>+91</Text>
-        <View style={styles.devider} />
-        <TextInput
-          ref={inputRef}
-          placeholder="Enter Number"
-          placeholderTextColor={colors.shadow}
-          value={phoneNumber}
-          style={styles.input}
-          keyboardType="phone-pad"
-          cursorColor={colors.primary}
-          maxLength={10}
-          onChangeText={setPhoneNumber}
-        />
-        {phoneNumber.length === 10 && !phoneNumberError && (
-          <Icon name="checkmark-circle" color={colors.primary} />
-        )}
-      </View>
-      <View style={styles.errorContainer}>
-        {phoneNumberError && (
-          <Text style={styles.error}>{phoneNumberError}</Text>
-        )}
-      </View>
+      <InputField
+        label="Email Address"
+        icon="mail-open-outline"
+        placeholder="Enter Email"
+        value={emailAddress}
+        onChangeText={handleEmailChange}
+        error={emailAddressError}
+        keyboardType="email-address"
+        returnKeyType="next"
+        showCheckIcon
+      />
+      <InputField
+        label="Password"
+        icon="lock-closed-outline"
+        placeholder="Enter Password"
+        value={password}
+        onChangeText={handlePasswordChange}
+        error={passwordError}
+        secureTextEntry={secure}
+        onSecureTextEntryToggle={() => setSecure(!secure)}
+      />
       <Button
-        disabled={phoneNumber.length !== 10 || phoneNumberError !== ''}
-        title="Send OTP"
-        onPress={() => {
-          // dispatch(generateOtp(phoneNumber));
-          // navigationService.navigate('Verify');
-        }}
+        disabled={emailAddressError !== '' || passwordError !== ''}
+        title="Login"
+        onPress={onLoginPressed}
       />
     </View>
   );
 }
+
 const createStyles = (colors: TColors) =>
   StyleSheet.create({
     container: {
       width: SCREEN_WIDTH * 0.92,
       marginHorizontal: SCREEN_WIDTH * 0.04,
     },
-    headerCont: {
-      padding: '5%',
-      justifyContent: 'space-between',
-    },
-    welcomeText: {
-      fontWeight: '700',
-      fontSize: moderateHScale(30),
-      color: colors.textPrimary,
-    },
-    footerCont: {
-      padding: '5%',
-      borderTopRightRadius: moderateHScale(40),
-      borderTopLeftRadius: moderateHScale(40),
-      backgroundColor: colors.background,
-    },
-    heading: {
-      color: colors.textPrimary,
-      fontSize: moderateHScale(16),
-      fontWeight: '500',
-      padding: '2%',
-    },
-    inputContainer: {
-      flexDirection: 'row',
-      height: moderateVScale(45),
-      borderRadius: moderateHScale(12),
-      paddingHorizontal: '2%',
-      alignItems: 'center',
-      backgroundColor: colors.background,
-      borderWidth: moderateHScale(1),
-      borderColor: colors.shadow,
-    },
-    flag: {
-      height: '90%',
-      width: '8%',
-    },
-    countryCode: {
-      color: colors.textPrimary,
-      fontSize: moderateHScale(16),
-      letterSpacing: moderateVScale(1),
-      paddingHorizontal: '2%',
-    },
-    devider: {
-      height: '60%',
-      width: moderateHScale(1),
-      backgroundColor: colors.shadow,
-      marginHorizontal: '2%',
-    },
-    input: {
-      flex: 1,
-      color: colors.textPrimary,
-      fontSize: moderateHScale(16),
-      letterSpacing: moderateHScale(1),
-    },
-    errorContainer: {
-      height: '15%',
-      padding: '2%',
-    },
-    error: {
-      color: colors.error,
-      fontSize: moderateHScale(12),
-    },
-    termText: {
-      color: colors.secondary,
-      fontSize: moderateHScale(14),
-      fontWeight: '500',
-      textAlign: 'center',
-      padding: '2%',
-    },
-    termHighlight: {
-      color: colors.primary,
-      fontWeight: '700',
-    },
   });
+
 export default memo(Email);
