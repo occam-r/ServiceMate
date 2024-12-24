@@ -1,12 +1,13 @@
-import auth from '@react-native-firebase/auth';
+import auth, {FirebaseAuthTypes} from '@react-native-firebase/auth';
 
 interface AuthService {
   signInWithEmailAndPassword: (
     email: string,
     password: string,
-  ) => Promise<void>;
-  signInWithPhoneNumber: (phoneNumber: string) => Promise<any>;
-  confirmCode: (code: string) => Promise<void>;
+  ) => Promise<FirebaseAuthTypes.UserCredential | undefined>;
+  signInWithPhoneNumber: (
+    phoneNumber: string,
+  ) => Promise<FirebaseAuthTypes.ConfirmationResult | undefined>;
   signOut: () => Promise<void>;
 }
 
@@ -14,16 +15,18 @@ class AuthServiceImpl implements AuthService {
   async signInWithEmailAndPassword(
     email: string,
     password: string,
-  ): Promise<void> {
+  ): Promise<FirebaseAuthTypes.UserCredential | undefined> {
     try {
-      await auth().signInWithEmailAndPassword(email, password);
-      console.log('User signed in!');
+      const result = await auth().signInWithEmailAndPassword(email, password);
+      return result;
     } catch (error) {
       console.error(error);
     }
   }
 
-  async signInWithPhoneNumber(phoneNumber: string): Promise<any> {
+  async signInWithPhoneNumber(
+    phoneNumber: string,
+  ): Promise<FirebaseAuthTypes.ConfirmationResult | undefined> {
     try {
       const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
       return confirmation;
@@ -32,20 +35,9 @@ class AuthServiceImpl implements AuthService {
     }
   }
 
-  async confirmCode(code: string): Promise<void> {
-    try {
-      await confirm.confirm(code);
-      console.log('Code confirmed!');
-    } catch (error) {
-      console.log('Invalid code.');
-      console.error(error);
-    }
-  }
-
   async signOut(): Promise<void> {
     try {
       await auth().signOut();
-      console.log('User signed out!');
     } catch (error) {
       console.error(error);
     }
